@@ -51,12 +51,27 @@ public class DealerController {
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    // Atualizar um dealer
+    // Atualizar um dealer e associá-lo ao torneio
     @PutMapping("/{id}")
-    public ResponseEntity<Dealer> updateDealer(@PathVariable Long id, @RequestBody Dealer dealerDetails) {
+    public ResponseEntity<Dealer> updateDealer(@PathVariable Long id, @RequestBody Dealer dealerDetails,
+            @RequestParam(required = false) Long tournamentId) {
         Optional<Dealer> dealerOptional = dealerService.findById(id);
         if (dealerOptional.isPresent()) {
             dealerDetails.setId(id);
+
+            // Associar o dealer ao torneio se o tournamentId for passado
+            if (tournamentId != null) {
+                Optional<Tournament> tournament = tournamentService.findById(tournamentId);
+                if (tournament.isPresent()) {
+                    dealerDetails.setTournament(tournament.get());
+                } else {
+                    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                }
+            } else {
+                // Manter o torneio atual se o tournamentId não for passado
+                dealerDetails.setTournament(dealerOptional.get().getTournament());
+            }
+
             Dealer updatedDealer = dealerService.update(dealerDetails);
             return new ResponseEntity<>(updatedDealer, HttpStatus.OK);
         }
