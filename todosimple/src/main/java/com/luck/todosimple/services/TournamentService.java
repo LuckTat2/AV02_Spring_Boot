@@ -46,4 +46,10 @@ public class TournamentService {
     public void delete(Long id) {
         tournamentRepository.deleteById(id);
     }
+
+    public List<Tournament> findByPlayerAndDealer(Long playerId, Long dealerId) {
+        // Implementação da lógica para buscar torneios com player e dealer específicos
+        return tournamentRepository.findByPlayerAndDealer(playerId, dealerId);
+    }
+    
 }

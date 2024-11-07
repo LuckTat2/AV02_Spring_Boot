@@ -58,4 +58,14 @@ public class TournamentController {
         tournamentService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    // Buscar torneios por Player e Dealer
+    @GetMapping("/byPlayerAndDealer")
+    public ResponseEntity<List<Tournament>> getTournamentsByPlayerAndDealer(
+        @RequestParam Long playerId,
+        @RequestParam Long dealerId) {
+    
+        List<Tournament> tournaments = tournamentService.findByPlayerAndDealer(playerId, dealerId);
+        return new ResponseEntity<>(tournaments, HttpStatus.OK);
+    }
 }
