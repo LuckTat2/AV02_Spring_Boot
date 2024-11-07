@@ -26,12 +26,16 @@ public class Player {
     @NotNull
     private Integer pokerChips;
 
-    @ManyToMany(mappedBy = "players")
+    @ManyToMany
+    @JoinTable(
+        name = "player_tournament", 
+        joinColumns = @JoinColumn(name = "player_id"), 
+        inverseJoinColumns = @JoinColumn(name = "tournament_id")
+    )
     private List<Tournament> tournaments;
 
     // Construtor padrão
-    public Player() {
-    }
+    public Player() {}
 
     // Construtor com argumentos
     public Player(String name, String email, Double chips, Integer pokerChips) {

@@ -10,7 +10,7 @@ import com.luck.todosimple.models.Tournament;
 import com.luck.todosimple.services.PlayerService;
 import com.luck.todosimple.services.TournamentService;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,8 +29,17 @@ public class PlayerController {
     public ResponseEntity<Player> createPlayer(@RequestBody Player player, @RequestParam Long tournamentId) {
         Optional<Tournament> tournament = tournamentService.findById(tournamentId);
         if (tournament.isPresent()) {
-            player.setTournaments(Arrays.asList(tournament.get())); // Associa o jogador ao torneio
-            Player createdPlayer = playerService.create(player);
+            List<Tournament> playerTournaments = player.getTournaments(); // Obtém a lista atual de torneios
+            if (playerTournaments == null) {
+                playerTournaments = new ArrayList<>(); // Inicializa a lista se estiver nula
+            }
+            playerTournaments.add(tournament.get()); // Adiciona o novo torneio
+            player.setTournaments(playerTournaments); // Atualiza a lista de torneios no jogador
+
+            // Verifique o ID do jogador antes de salvar
+            System.out.println("Jogador antes de salvar: " + player.getName() + " com torneios: " + player.getTournaments().size());
+            
+            Player createdPlayer = playerService.create(player); // Salva o jogador no banco
             return new ResponseEntity<>(createdPlayer, HttpStatus.CREATED);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
