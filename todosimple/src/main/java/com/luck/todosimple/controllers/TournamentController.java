@@ -21,6 +21,7 @@ public class TournamentController {
     // Criar um novo torneio
     @PostMapping
     public ResponseEntity<Tournament> createTournament(@RequestBody Tournament tournament) {
+        // Criar torneio e associar jogadores e dealers
         Tournament createdTournament = tournamentService.create(tournament);
         return new ResponseEntity<>(createdTournament, HttpStatus.CREATED);
     }
@@ -37,12 +38,13 @@ public class TournamentController {
     public ResponseEntity<Tournament> getTournamentById(@PathVariable Long id) {
         Optional<Tournament> tournament = tournamentService.findById(id);
         return tournament.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-                         .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     // Atualizar um torneio
     @PutMapping("/{id}")
-    public ResponseEntity<Tournament> updateTournament(@PathVariable Long id, @RequestBody Tournament tournamentDetails) {
+    public ResponseEntity<Tournament> updateTournament(@PathVariable Long id,
+            @RequestBody Tournament tournamentDetails) {
         Optional<Tournament> tournamentOptional = tournamentService.findById(id);
         if (tournamentOptional.isPresent()) {
             tournamentDetails.setId(id);
@@ -62,9 +64,9 @@ public class TournamentController {
     // Buscar torneios por Player e Dealer
     @GetMapping("/byPlayerAndDealer")
     public ResponseEntity<List<Tournament>> getTournamentsByPlayerAndDealer(
-        @RequestParam Long playerId,
-        @RequestParam Long dealerId) {
-    
+            @RequestParam Long playerId,
+            @RequestParam Long dealerId) {
+
         List<Tournament> tournaments = tournamentService.findByPlayerAndDealer(playerId, dealerId);
         return new ResponseEntity<>(tournaments, HttpStatus.OK);
     }

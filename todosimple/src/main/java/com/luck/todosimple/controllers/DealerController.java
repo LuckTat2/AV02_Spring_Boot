@@ -6,7 +6,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.luck.todosimple.models.Dealer;
+import com.luck.todosimple.models.Tournament;
 import com.luck.todosimple.services.DealerService;
+import com.luck.todosimple.services.TournamentService;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,11 +20,20 @@ public class DealerController {
     @Autowired
     private DealerService dealerService;
 
-    // Criar um novo dealer
+    @Autowired
+    private TournamentService tournamentService; // Adicionar TournamentService aqui
+
+    // Criar um novo dealer e associá-lo ao torneio
     @PostMapping
-    public ResponseEntity<Dealer> createDealer(@RequestBody Dealer dealer) {
-        Dealer createdDealer = dealerService.create(dealer);
-        return new ResponseEntity<>(createdDealer, HttpStatus.CREATED);
+    public ResponseEntity<Dealer> createDealer(@RequestBody Dealer dealer, @RequestParam Long tournamentId) {
+        Optional<Tournament> tournament = tournamentService.findById(tournamentId);
+        if (tournament.isPresent()) {
+            dealer.setTournament(tournament.get()); // Associa o dealer ao torneio
+            Dealer createdDealer = dealerService.create(dealer);
+            return new ResponseEntity<>(createdDealer, HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     // Buscar todos os dealers
@@ -37,7 +48,7 @@ public class DealerController {
     public ResponseEntity<Dealer> getDealerById(@PathVariable Long id) {
         Optional<Dealer> dealer = dealerService.findById(id);
         return dealer.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-                     .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     // Atualizar um dealer

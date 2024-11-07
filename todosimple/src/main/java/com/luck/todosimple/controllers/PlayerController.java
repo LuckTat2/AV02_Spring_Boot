@@ -6,8 +6,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.luck.todosimple.models.Player;
+import com.luck.todosimple.models.Tournament;
 import com.luck.todosimple.services.PlayerService;
+import com.luck.todosimple.services.TournamentService;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,11 +21,20 @@ public class PlayerController {
     @Autowired
     private PlayerService playerService;
 
-    // Criar um novo jogador
+    @Autowired
+    private TournamentService tournamentService;
+
+    // Criar um novo jogador e associá-lo ao torneio
     @PostMapping
-    public ResponseEntity<Player> createPlayer(@RequestBody Player player) {
-        Player createdPlayer = playerService.create(player);
-        return new ResponseEntity<>(createdPlayer, HttpStatus.CREATED);
+    public ResponseEntity<Player> createPlayer(@RequestBody Player player, @RequestParam Long tournamentId) {
+        Optional<Tournament> tournament = tournamentService.findById(tournamentId);
+        if (tournament.isPresent()) {
+            player.setTournaments(Arrays.asList(tournament.get())); // Associa o jogador ao torneio
+            Player createdPlayer = playerService.create(player);
+            return new ResponseEntity<>(createdPlayer, HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     // Buscar todos os jogadores
@@ -37,7 +49,7 @@ public class PlayerController {
     public ResponseEntity<Player> getPlayerById(@PathVariable Long id) {
         Optional<Player> player = playerService.findById(id);
         return player.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-                     .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     // Atualizar um jogador

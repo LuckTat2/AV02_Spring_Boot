@@ -22,12 +22,16 @@ public class Tournament {
     private Double prizePool;
 
     @ManyToMany
-    @JoinTable(
-        name = "tournament_player",
-        joinColumns = @JoinColumn(name = "tournament_id"),
-        inverseJoinColumns = @JoinColumn(name = "player_id")
-    )
+    @JoinTable(name = "tournament_player", joinColumns = @JoinColumn(name = "tournament_id"), inverseJoinColumns = @JoinColumn(name = "player_id"))
     private List<Player> players;
+
+    @ManyToMany
+    @JoinTable(name = "tournament_dealer", joinColumns = @JoinColumn(name = "tournament_id"), inverseJoinColumns = @JoinColumn(name = "dealer_id"))
+    private List<Dealer> dealers;
+
+    @ManyToOne
+    @JoinColumn(name = "dealer_id")
+    private Dealer dealer; // Cada torneio tem um dealer
 
     @NotNull
     private Boolean reentryAllowed;
