@@ -29,11 +29,6 @@ public class Player {
     @ManyToMany(mappedBy = "players")
     private List<Tournament> tournaments;
 
-    // Adiciona a associação com o torneio
-    @ManyToOne
-    @JoinColumn(name = "tournament_id")
-    private Tournament tournament;
-
     // Construtor padrão
     public Player() {
     }
@@ -93,13 +88,5 @@ public class Player {
 
     public void setTournaments(List<Tournament> tournaments) {
         this.tournaments = tournaments;
-    }
-
-    public void setTournament(Tournament tournament) {
-        this.tournament = tournament;
-    }
-    
-    public Tournament getTournament() {
-        return tournament;
     }
 }
