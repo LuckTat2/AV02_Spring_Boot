@@ -27,7 +27,22 @@ public class PlayerService {
     }
 
     @Transactional
-    public Player update(Player player) {
+    public Player update(Player playerDetails) {
+        // Busca o Player atual no banco de dados
+        Player player = playerRepository.findById(playerDetails.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Player not found with id: " + playerDetails.getId()));
+
+        // Mantém o torneio atual se o torneio não for fornecido no playerDetails
+        if (playerDetails.getTournament() == null) {
+            playerDetails.setTournament(player.getTournament());
+        }
+
+        // Atualiza outros dados do Player
+        player.setName(playerDetails.getName());
+        player.setEmail(playerDetails.getEmail());
+        player.setChips(playerDetails.getChips());
+        player.setPokerChips(playerDetails.getPokerChips());
+
         return playerRepository.save(player);
     }
 
@@ -40,4 +55,10 @@ public class PlayerService {
     public List<Player> findByName(String name) {
         return playerRepository.findByName(name);
     }
+
+    @Transactional(readOnly = true)
+    public List<Player> findAll() {
+        return playerRepository.findAll();
+    }
+
 }

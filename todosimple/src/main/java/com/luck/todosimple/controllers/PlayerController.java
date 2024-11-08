@@ -29,28 +29,12 @@ public class PlayerController {
     public ResponseEntity<Player> createPlayer(@RequestBody Player player, @RequestParam Long tournamentId) {
         Optional<Tournament> tournament = tournamentService.findById(tournamentId);
         if (tournament.isPresent()) {
-            List<Tournament> playerTournaments = player.getTournaments(); // Obtém a lista atual de torneios
-            if (playerTournaments == null) {
-                playerTournaments = new ArrayList<>(); // Inicializa a lista se estiver nula
-            }
-            playerTournaments.add(tournament.get()); // Adiciona o novo torneio
-            player.setTournaments(playerTournaments); // Atualiza a lista de torneios no jogador
-
-            // Verifique o ID do jogador antes de salvar
-            System.out.println("Jogador antes de salvar: " + player.getName() + " com torneios: " + player.getTournaments().size());
-            
-            Player createdPlayer = playerService.create(player); // Salva o jogador no banco
+            player.setTournament(tournament.get());
+            Player createdPlayer = playerService.create(player);
             return new ResponseEntity<>(createdPlayer, HttpStatus.CREATED);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-    }
-
-    // Buscar todos os jogadores
-    @GetMapping
-    public ResponseEntity<List<Player>> getAllPlayers() {
-        List<Player> players = playerService.findByName(null);
-        return new ResponseEntity<>(players, HttpStatus.OK);
     }
 
     // Buscar um jogador por ID
@@ -86,4 +70,12 @@ public class PlayerController {
         List<Player> players = playerService.findByName(name);
         return new ResponseEntity<>(players, HttpStatus.OK);
     }
+
+    // Buscar todos os jogadoresS
+    @GetMapping("/players")
+    public ResponseEntity<List<Player>> getAllPlayers() {
+        List<Player> players = playerService.findAll();
+        return new ResponseEntity<>(players, HttpStatus.OK);
+    }
+
 }

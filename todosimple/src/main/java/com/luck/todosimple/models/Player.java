@@ -26,71 +26,33 @@ public class Player {
     @NotNull
     private Integer pokerChips;
 
-    @ManyToMany
-    @JoinTable(
-        name = "player_tournament", 
-        joinColumns = @JoinColumn(name = "player_id"), 
-        inverseJoinColumns = @JoinColumn(name = "tournament_id")
-    )
-    private List<Tournament> tournaments;
+    @ManyToOne
+    @JoinColumn(name = "tournament_id", nullable = false)
+    private Tournament tournament;
 
     // Construtor padrão
     public Player() {}
 
     // Construtor com argumentos
-    public Player(String name, String email, Double chips, Integer pokerChips) {
+    public Player(String name, String email, Double chips, Integer pokerChips, Tournament tournament) {
         this.name = name;
         this.email = email;
         this.chips = chips;
         this.pokerChips = pokerChips;
+        this.tournament = tournament;
     }
 
     // Getters e Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public Double getChips() {
-        return chips;
-    }
-
-    public void setChips(Double chips) {
-        this.chips = chips;
-    }
-
-    public Integer getPokerChips() {
-        return pokerChips;
-    }
-
-    public void setPokerChips(Integer pokerChips) {
-        this.pokerChips = pokerChips;
-    }
-
-    public List<Tournament> getTournaments() {
-        return tournaments;
-    }
-
-    public void setTournaments(List<Tournament> tournaments) {
-        this.tournaments = tournaments;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+    public Double getChips() { return chips; }
+    public void setChips(Double chips) { this.chips = chips; }
+    public Integer getPokerChips() { return pokerChips; }
+    public void setPokerChips(Integer pokerChips) { this.pokerChips = pokerChips; }
+    public Tournament getTournament() { return tournament; }
+    public void setTournament(Tournament tournament) { this.tournament = tournament; }
 }
