@@ -17,4 +17,4 @@ public interface TournamentRepository extends JpaRepository<Tournament, Long> {
        "WHERE p.id = :playerId AND d.id = :dealerId")
     List<Tournament> findByPlayerAndDealer(@Param("playerId") Long playerId, @Param("dealerId") Long dealerId);
 
-}
+} 

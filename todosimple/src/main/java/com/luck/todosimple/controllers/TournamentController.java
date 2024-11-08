@@ -1,7 +1,6 @@
 package com.luck.todosimple.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,56 +17,42 @@ public class TournamentController {
     @Autowired
     private TournamentService tournamentService;
 
-    // Criar um novo torneio
-    @PostMapping
-    public ResponseEntity<Tournament> createTournament(@RequestBody Tournament tournament) {
-        // Criar torneio e associar jogadores e dealers
-        Tournament createdTournament = tournamentService.create(tournament);
-        return new ResponseEntity<>(createdTournament, HttpStatus.CREATED);
-    }
-
-    // Buscar todos os torneios
     @GetMapping
-    public ResponseEntity<List<Tournament>> getAllTournaments() {
-        List<Tournament> tournaments = tournamentService.findAll();
-        return new ResponseEntity<>(tournaments, HttpStatus.OK);
+    public List<Tournament> getAllTournaments() {
+        return tournamentService.findAll();
     }
 
-    // Buscar um torneio por ID
     @GetMapping("/{id}")
     public ResponseEntity<Tournament> getTournamentById(@PathVariable Long id) {
         Optional<Tournament> tournament = tournamentService.findById(id);
-        return tournament.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        return tournament.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // Atualizar um torneio
+    @PostMapping
+    public Tournament createTournament(@RequestBody Tournament tournament) {
+        return tournamentService.create(tournament);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<Tournament> updateTournament(@PathVariable Long id,
             @RequestBody Tournament tournamentDetails) {
-        Optional<Tournament> tournamentOptional = tournamentService.findById(id);
-        if (tournamentOptional.isPresent()) {
-            tournamentDetails.setId(id);
-            Tournament updatedTournament = tournamentService.update(tournamentDetails);
-            return new ResponseEntity<>(updatedTournament, HttpStatus.OK);
+        Optional<Tournament> existingTournament = tournamentService.findById(id);
+        if (existingTournament.isPresent()) {
+            Tournament tournament = existingTournament.get();
+            tournament.setName(tournamentDetails.getName());
+            tournament.setEntryFee(tournamentDetails.getEntryFee());
+            tournament.setPrizePool(tournamentDetails.getPrizePool());
+            tournament.setReentryAllowed(tournamentDetails.getReentryAllowed());
+            Tournament updatedTournament = tournamentService.update(tournament);
+            return ResponseEntity.ok(updatedTournament);
+        } else {
+            return ResponseEntity.notFound().build();
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    // Excluir um torneio
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTournament(@PathVariable Long id) {
         tournamentService.delete(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    // Buscar torneios por Player e Dealer
-    @GetMapping("/byPlayerAndDealer")
-    public ResponseEntity<List<Tournament>> getTournamentsByPlayerAndDealer(
-            @RequestParam Long playerId,
-            @RequestParam Long dealerId) {
-
-        List<Tournament> tournaments = tournamentService.findByPlayerAndDealer(playerId, dealerId);
-        return new ResponseEntity<>(tournaments, HttpStatus.OK);
+        return ResponseEntity.noContent().build();
     }
 }

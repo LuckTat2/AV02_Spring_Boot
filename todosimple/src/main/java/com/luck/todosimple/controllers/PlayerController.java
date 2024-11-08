@@ -37,6 +37,13 @@ public class PlayerController {
         }
     }
 
+    // Buscar todos os jogadores
+    @GetMapping
+    public ResponseEntity<List<Player>> getAllPlayers() {
+        List<Player> players = playerService.findByName(null);
+        return new ResponseEntity<>(players, HttpStatus.OK);
+    }
+
     // Buscar um jogador por ID
     @GetMapping("/{id}")
     public ResponseEntity<Player> getPlayerById(@PathVariable Long id) {
@@ -70,12 +77,4 @@ public class PlayerController {
         List<Player> players = playerService.findByName(name);
         return new ResponseEntity<>(players, HttpStatus.OK);
     }
-
-    // Buscar todos os jogadoresS
-    @GetMapping("/players")
-    public ResponseEntity<List<Player>> getAllPlayers() {
-        List<Player> players = playerService.findAll();
-        return new ResponseEntity<>(players, HttpStatus.OK);
-    }
-
 }

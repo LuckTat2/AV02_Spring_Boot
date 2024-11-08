@@ -13,23 +13,12 @@ import java.util.Optional;
 @Service
 public class TournamentService {
 
-    private final TournamentRepository tournamentRepository;
-
     @Autowired
-    public TournamentService(TournamentRepository tournamentRepository) {
-        this.tournamentRepository = tournamentRepository;
-    }
+    private TournamentRepository tournamentRepository;
 
-    public List<Tournament> findAll() {
-        return tournamentRepository.findAll();
-    }
-
+    @Transactional(readOnly = true)
     public Optional<Tournament> findById(Long id) {
         return tournamentRepository.findById(id);
-    }
-
-    public List<Tournament> findByName(String name) {
-        return tournamentRepository.findByName(name);
     }
 
     @Transactional
@@ -47,9 +36,8 @@ public class TournamentService {
         tournamentRepository.deleteById(id);
     }
 
-    public List<Tournament> findByPlayerAndDealer(Long playerId, Long dealerId) {
-        // Implementação da lógica para buscar torneios com player e dealer específicos
-        return tournamentRepository.findByPlayerAndDealer(playerId, dealerId);
+    @Transactional(readOnly = true)
+    public List<Tournament> findAll() {
+        return tournamentRepository.findAll();
     }
-    
 }

@@ -8,6 +8,4 @@ import java.util.List;
 
 public interface PlayerRepository extends JpaRepository<Player, Long> {
     List<Player> findByName(String name);
-    List<Player> findAll();
 }
-
