@@ -1,5 +1,6 @@
 package com.luck.todosimple.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.util.List;
@@ -28,6 +29,7 @@ public class Player {
 
     @ManyToOne
     @JoinColumn(name = "tournament_id", nullable = false)
+    @JsonIgnore
     private Tournament tournament;
 
     // Construtor padrão
