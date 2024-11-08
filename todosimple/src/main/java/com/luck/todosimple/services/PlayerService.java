@@ -4,11 +4,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.luck.todosimple.models.Player;
+import com.luck.todosimple.models.Tournament;
 import com.luck.todosimple.repositories.PlayerRepository;
 
 import java.util.List;
 import java.util.Optional;
+
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Service
 public class PlayerService {
@@ -60,5 +65,10 @@ public class PlayerService {
     public List<Player> findAll() {
         return playerRepository.findAll();
     }
+
+    @ManyToOne
+    @JoinColumn(name = "tournament_id", nullable = false)
+    @JsonBackReference
+    private Tournament tournament;
 
 }
